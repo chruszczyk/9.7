@@ -1,4 +1,5 @@
-var newGameBtn = document.getElementById('js-newGameButton');
+var newGameBtn = document.getElementById('js-newGameButton'),
+	finalResult = document.getElementById('js-finalResult');
 
 newGameBtn.addEventListener('click', newGame);
 
@@ -6,9 +7,9 @@ var pickRock = document.getElementById('js-playerPick_rock'),
     pickPaper = document.getElementById('js-playerPick_paper'),
     pickScissors = document.getElementById('js-playerPick_scissors');
 
-pickRock.addEventListener('click', function() { playerPick('rock') });
-pickPaper.addEventListener('click', function() { playerPick('paper') });
-pickScissors.addEventListener('click', function() { playerPick('scissors') });
+pickRock.addEventListener('click', function() { playerPick('rock'); });
+pickPaper.addEventListener('click', function() { playerPick('paper'); });
+pickScissors.addEventListener('click', function() { playerPick('scissors'); });
 
 var gameState = 'notStarted',
     player = {
@@ -23,16 +24,25 @@ var newGameElem = document.getElementById('js-newGameElement'),
     pickElem = document.getElementById('js-playerPickElement'),
     resultsElem = document.getElementById('js-resultsTableElement');
 
+
 function setGameElements() {
   switch(gameState) {
     case 'started':
         newGameElem.style.display = 'none';
         pickElem.style.display = 'block';
         resultsElem.style.display = 'block';
+        finalResult.textContent = '';
       break;
     case 'ended':
-        newGameBtn.innerText = 'Play again';
+    	newGameBtn.textContent = 'Play again';
+    	if (player.score > computer.score) {
+    		finalResult.textContent = 'Congrats ' + player.name + ', you won!';
+    	} else {
+    		finalResult.textContent = 'You lost, try again!';
+    	}
+    	/* falls through */
     case 'notStarted':
+    	/* falls through */
     default:
         newGameElem.style.display = 'block';
         pickElem.style.display = 'none';
@@ -89,7 +99,7 @@ function checkRoundWinner(playerPick, computerPick) {
   var winnerIs = 'player';
 
     if (playerPick == computerPick) {
-        winnerIs = 'noone'; // remis
+        winnerIs = 'noone';
     } else if (
         (computerPick == 'rock' &&  playerPick == 'scissors') ||
         (computerPick == 'scissors' &&  playerPick == 'paper') ||
@@ -114,12 +124,7 @@ function setGamePoints() {
 }
 
 function checkGamePoints() {
-	if (player.score == 10) {
-		alert('Congrats, you won!');
-		gameState = 'ended';
-		setGameElements();
-	} else if (computer.score == 10) {
-		alert('You lose!');
+	if (player.score == 10 || computer.score == 10) {
 		gameState = 'ended';
 		setGameElements();
 	}
